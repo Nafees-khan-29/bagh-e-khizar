@@ -158,8 +158,8 @@ function Footer() {
           <h4 className={headingClass}>Company</h4>
           <ul className={listClass}>
             <li><Link to="/about" className={linkClass}>About Us</Link></li>
-            <li><Link to="/Initiatives" className={linkClass}>Our Programs</Link></li>
-            <li><Link to="/Publications" className={linkClass}>Our Publication</Link></li>
+            <li><Link to="/initiatives" className={linkClass}>Our Programs</Link></li>
+            <li><Link to="/publications" className={linkClass}>Our Publication</Link></li>
             {/* <li><Link to="/careers" className={linkClass}>Careers</Link></li> */}
           </ul>
         </div>

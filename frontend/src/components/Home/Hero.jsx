@@ -32,7 +32,7 @@ import logo from "../../assets/logo-bagh-e-khizar.png";
 // DATA
 // ============================================================
 
-const identity = ["Discover", "Preserve", "Publish", "Educate"];
+const identity = ["Discover", "Learn", "Educate",  "Publish"];
 
 // ============================================================
 // ANIMATION WRAPPER
@@ -625,7 +625,7 @@ function Hero() {
             "
           >
             <Link
-              to="/Initiatives"
+              to="/initiatives"
               aria-label="Dr. Rank Nazeer Institute of Excellence, learn more"
               className="
                 group
@@ -806,7 +806,7 @@ function Hero() {
               "
             >
               <Link
-                to="/Publications"
+                to="/publications"
                 className="
                   group
                   inline-flex

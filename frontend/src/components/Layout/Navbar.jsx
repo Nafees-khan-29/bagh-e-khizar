@@ -8,7 +8,7 @@ import { Link, useLocation } from "react-router-dom";
 const links = [
   { name: "Home", path: "/", icon: "home" },
   { name: "About", path: "/about", icon: "about" },
-  { name: "Publications", path: "/Publications", icon: "publications" },
+  { name: "Publications", path: "/publications", icon: "publications" },
   { name: "Contact", path: "/contact-us", icon: "contact" },
 ];
 
