@@ -1,9 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { useSearchParams } from "react-router-dom";
 import {
-  Mail,
-  Phone,
+  // Mail,
   ArrowUpRight,
   Copy,
   Check,
@@ -15,8 +13,6 @@ import {
 
 const CONTACT = {
   email: "baghekhizar@gmail.com",
-  phone: "+91 9036114621",
-  phoneHref: "tel:+919036114621",
 };
 
 // Free key from https://web3forms.com
@@ -65,54 +61,6 @@ const ENQUIRY_SLUGS = {
 
 const enquiryTypes = Object.values(ENQUIRY_SLUGS);
 
-const contactCards = [
-  {
-    icon: Mail,
-    title: "Email",
-    value: CONTACT.email,
-    href: `mailto:${CONTACT.email}`,
-    copyText: CONTACT.email,
-  },
-  {
-    icon: Phone,
-    title: "Phone",
-    value: CONTACT.phone,
-    href: CONTACT.phoneHref,
-    copyText: CONTACT.phone,
-  },
-];
-
-const enquiryAreas = [
-  {
-    number: "01",
-    title: "General Enquiries",
-    type: "General Enquiry",
-    description:
-      "Questions about Bagh-e-Khizar, our publications, initiatives, programmes or activities.",
-  },
-  {
-    number: "02",
-    title: "Authors & Manuscripts",
-    type: "Authors & Manuscripts",
-    description:
-      "For authors, scholars and writers interested in submitting manuscripts or publication proposals.",
-  },
-  {
-    number: "03",
-    title: "Libraries & Institutions",
-    type: "Libraries & Institutions",
-    description:
-      "For institutional orders, library editions, educational institutions and research organisations.",
-  },
-  {
-    number: "04",
-    title: "Booksellers & Distribution",
-    type: "Booksellers & Distribution",
-    description:
-      "For booksellers, distributors and organisations interested in publishing and distribution partnerships.",
-  },
-];
-
 const emptyForm = {
   name: "",
   email: "",
@@ -131,10 +79,7 @@ function ContactComponent() {
   const [status, setStatus] = useState("idle");
   const [formError, setFormError] = useState("");
 
-  // Title of the contact card whose value was just copied
-  const [copied, setCopied] = useState("");
-
-  const [searchParams] = useSearchParams();
+  const [copied, setCopied] = useState(false);
 
   const formRef = useRef(null);
   const nameRef = useRef(null);
@@ -168,19 +113,15 @@ function ContactComponent() {
     }
   };
 
-  // Clicking an enquiry card
-  const chooseEnquiry = (type) => {
-    setFormData((prev) => ({ ...prev, enquiry: type }));
-    resetStatus();
-    scrollToForm();
-  };
-
-  // Copy a contact value to the clipboard
-  const handleCopy = async (title, text) => {
+  // Copy email to clipboard
+  const handleCopyEmail = async () => {
     try {
-      await navigator.clipboard.writeText(text);
-      setCopied(title);
-      setTimeout(() => setCopied((c) => (c === title ? "" : c)), 2000);
+      await navigator.clipboard.writeText(CONTACT.email);
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
     } catch (error) {
       console.error("Copy failed:", error);
     }
@@ -261,39 +202,12 @@ function ContactComponent() {
       }
 
       setStatus("success");
-
-      // Only clear the form once the message has really been sent
       setFormData(emptyForm);
     } catch (error) {
       console.error("Contact form error:", error);
       setStatus("error");
     }
   };
-
-  // ---------- effects ----------
-
-  useEffect(() => {
-    document.title = "Contact — Bagh-e-Khizar";
-  }, []);
-
-  // Arriving from a link like /contact?enquiry=authors
-  useEffect(() => {
-    const slug = searchParams.get("enquiry");
-
-    const type =
-      slug && Object.prototype.hasOwnProperty.call(ENQUIRY_SLUGS, slug)
-        ? ENQUIRY_SLUGS[slug]
-        : null;
-
-    if (!type) return;
-
-    setFormData((prev) => ({ ...prev, enquiry: type }));
-
-    const timer = setTimeout(scrollToForm, 400);
-    return () => clearTimeout(timer);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
 
   return (
     <main className="overflow-x-hidden bg-[#F4F0E5] text-[#10251A]">
@@ -357,18 +271,18 @@ function ContactComponent() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="mt-6 max-w-2xl text-base leading-7 text-[#D9D5C7] sm:mt-8 sm:leading-8 md:text-lg"
             >
-              Whether you are a student,reader, author, scholar, institution,
+              Whether you are a student, reader, author, scholar, institution,
               bookseller or simply someone who wishes to connect with
               Bagh-e-Khizar, we would be glad to hear from you.
             </motion.p>
 
-            {/* Buttons */}
+            {/* Button */}
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
+              className="mt-8"
             >
               <button
                 type="button"
@@ -380,13 +294,6 @@ function ContactComponent() {
                   ↓
                 </span>
               </button>
-
-              {/* <a
-                href={`mailto:${CONTACT.email}`}
-                className="inline-flex w-full items-center justify-center gap-3 border border-[#D6AD55]/40 px-6 py-3.5 text-[10px] uppercase tracking-[0.18em] text-[#E7C76C] transition-all duration-300 hover:border-[#D6AD55] hover:bg-[#D6AD55]/5 sm:w-auto"
-              >
-                Email Directly
-              </a> */}
             </motion.div>
 
             {/* Identity */}
@@ -399,206 +306,56 @@ function ContactComponent() {
             >
               <span>Discover</span>
               <span className="text-[#D6AD55]">•</span>
-              <span>Preserve</span>
-              <span className="text-[#D6AD55]">•</span>
-              <span>Publish</span>
+              <span>Learn</span>
               <span className="text-[#D6AD55]">•</span>
               <span>Educate</span>
+              <span className="text-[#D6AD55]">•</span>
+              <span>Publish</span>
             </motion.div>
           </div>
         </div>
       </section>
 
       {/* =====================================================
-          INTRODUCTION
+          DIRECT EMAIL
       ===================================================== */}
 
-      <section className={`py-16 sm:py-20 lg:py-28 ${PX}`}>
+      <section className={`py-14 sm:py-16 lg:py-20 ${PX}`}>
         <div className={WRAP}>
-          <div className="grid gap-8 sm:gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
-            {/* Left */}
+          <div className="border border-[#10251A]/10 bg-[#EEE9DC] px-6 py-8 sm:px-10 sm:py-10 lg:px-14 lg:py-12">
+            <div className="flex flex-col gap-7 sm:flex-row sm:items-center sm:justify-between sm:gap-10">
+              <div>
+                <p className={LABEL}>Email Us</p>
 
-            <div>
-              <p className={LABEL}>Start a Conversation</p>
-
-              <h2 className={`mt-4 max-w-xl ${H2}`}>
-                Every meaningful journey begins with a conversation.
-              </h2>
-            </div>
-
-            {/* Right */}
-
-            <div>
-              <p className="max-w-2xl text-base leading-7 text-[#62675F] sm:leading-8 md:text-lg">
-                Bagh-e-Khizar is a space for knowledge, spirituality,
-                literature and the timeless search for truth. If you have a
-                question, an idea, a manuscript, a book enquiry or an
-                opportunity to collaborate, reach out to us.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =====================================================
-          CONTACT INFORMATION
-      ===================================================== */}
-
-      <section className={`pb-16 sm:pb-20 lg:pb-24 ${PX}`}>
-        <div
-          className={`${WRAP} grid gap-4 sm:grid-cols-2 sm:gap-5`}
-        >
-          {contactCards.map((card, index) => {
-            const Icon = card.icon;
-            const isCopied = copied === card.title;
-
-            return (
-              <motion.div
-                key={card.title}
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -4 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="group relative min-w-0 border border-[#10251A]/10 bg-[#EEE9DC] p-6 transition-colors duration-300 focus-within:border-[#D6AD55]/60 hover:border-[#D6AD55]/60 hover:bg-[#F1ECDD] hover:shadow-[0_18px_45px_rgba(16,37,26,0.08)] sm:p-7"
-              >
-                {/* Icon */}
-
-                <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#D6AD55]/50 text-[#9A7430] transition-all duration-300 group-hover:border-[#D6AD55] group-hover:bg-[#D6AD55] group-hover:text-[#10251A]">
-                  <Icon size={18} strokeWidth={1.5} />
-                </div>
-
-                {/* Title */}
-
-                <p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-[#7A7D75] sm:mt-7">
-                  {card.title}
+                <p className="mt-3 text-sm leading-6 text-[#62675F] sm:text-base">
+                  For publications, manuscripts, collaborations and general
+                  enquiries, write to us directly.
                 </p>
+              </div>
 
-                {/* Value */}
-
-                <p className="mt-2 break-words font-amiri text-xl font-semibold text-[#10251A] sm:mt-3">
-                  <a
-                    href={card.href}
-                    className="outline-none after:absolute after:inset-0 focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-[#D6AD55]"
-                  >
-                    {card.value}
-                  </a>
-                </p>
-
-                {/* Copy button */}
-
-                {card.copyText && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => handleCopy(card.title, card.copyText)}
-                      aria-label={`Copy ${card.title.toLowerCase()}`}
-                      title={isCopied ? "Copied" : "Copy"}
-                      className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-[#10251A]/10 text-[#7A7D75] transition-colors duration-300 hover:border-[#D6AD55] hover:text-[#10251A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D6AD55] sm:right-5 sm:top-5"
-                    >
-                      {isCopied ? (
-                        <Check
-                          size={16}
-                          strokeWidth={1.75}
-                          className="text-[#52684F]"
-                        />
-                      ) : (
-                        <Copy size={16} strokeWidth={1.5} />
-                      )}
-                    </button>
-
-                    <span className="sr-only" aria-live="polite">
-                      {isCopied ? `${card.title} copied` : ""}
-                    </span>
-                  </>
-                )}
-              </motion.div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* =====================================================
-          ENQUIRY AREAS
-      ===================================================== */}
-
-      <section className={`bg-[#E9E4D7] py-16 sm:py-20 lg:py-28 ${PX}`}>
-        <div className={WRAP}>
-          {/* Heading */}
-
-          <div className="mb-10 max-w-2xl sm:mb-14">
-            <p className={LABEL}>How We Can Help</p>
-
-            <h2 className={`mt-4 ${H2}`}>
-              What would you like to talk about?
-            </h2>
-          </div>
-
-          {/* Cards */}
-
-          <div className="grid gap-4 sm:gap-5 md:grid-cols-2">
-            {enquiryAreas.map((area, index) => {
-              const selected = formData.enquiry === area.type;
-
-              return (
-                <motion.button
-                  key={area.number}
-                  type="button"
-                  onClick={() => chooseEnquiry(area.type)}
-                  aria-pressed={selected}
-                  initial={{ opacity: 0, y: 25 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: (index % 2) * 0.08,
-                  }}
-                  className={`group relative w-full overflow-hidden border p-6 text-left transition-colors duration-300 hover:border-[#D6AD55]/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D6AD55] sm:p-8 lg:p-10 ${
-                    selected
-                      ? "border-[#D6AD55] bg-[#FBF8EE]"
-                      : "border-[#10251A]/10 bg-[#F4F0E5]"
-                  }`}
+              <div className="flex min-w-0 items-center gap-3">
+                <a
+                  href={`mailto:${CONTACT.email}`}
+                  className="min-w-0 break-all font-amiri text-2xl font-semibold text-[#10251A] transition-colors duration-300 hover:text-[#9A7430] sm:text-3xl"
                 >
-                  {/* Number */}
+                  {CONTACT.email}
+                </a>
 
-                  <span className="block font-amiri text-sm text-[#D6AD55]">
-                    {area.number}
-                  </span>
-
-                  {/* Arrow */}
-
-                  <ArrowUpRight
-                    size={20}
-                    strokeWidth={1.5}
-                    className="absolute right-5 top-5 text-[#9A7430] transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 sm:right-8 sm:top-8"
-                  />
-
-                  {/* Title */}
-
-                  <span className="mt-5 block font-amiri text-2xl font-bold sm:mt-7 lg:text-3xl">
-                    {area.title}
-                  </span>
-
-                  {/* Description */}
-
-                  <span className="mt-3 block max-w-lg text-sm leading-7 text-[#666A62] sm:mt-4 lg:text-base">
-                    {area.description}
-                  </span>
-
-                  {/* Bottom line + selected hint */}
-
-                  <span className="mt-6 flex items-center gap-4 sm:mt-8">
-                    <span className="block h-px w-12 bg-[#D6AD55] transition-all duration-500 group-hover:w-20" />
-
-                    <span className="text-[10px] uppercase tracking-[0.16em] text-[#9A7430]">
-                      {selected
-                        ? "Selected in the form below"
-                        : "Write to us about this"}
-                    </span>
-                  </span>
-                </motion.button>
-              );
-            })}
+                <button
+                  type="button"
+                  onClick={handleCopyEmail}
+                  aria-label={copied ? "Email copied" : "Copy email address"}
+                  title={copied ? "Copied" : "Copy email"}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#10251A]/10 text-[#7A7D75] transition-colors duration-300 hover:border-[#D6AD55] hover:text-[#10251A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D6AD55]"
+                >
+                  {copied ? (
+                    <Check size={16} strokeWidth={1.75} />
+                  ) : (
+                    <Copy size={16} strokeWidth={1.5} />
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -824,7 +581,7 @@ function ContactComponent() {
       >
         <div className="mx-auto max-w-3xl text-center">
           <p className="font-amiri text-xl italic leading-relaxed text-[#536054] sm:text-2xl md:text-3xl">
-            "Every book has a journey. Every reader brings a new meaning."
+            "Every book has a journey. Every reader is its traveler."
           </p>
 
           <div className="mx-auto mt-6 h-px w-16 bg-[#D6AD55] sm:mt-8" />
